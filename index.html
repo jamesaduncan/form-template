@@ -7,44 +7,25 @@
         <title>Form Template</title>
 
         <script type="module">
-            import SelectorSubscriber from "https://jamesaduncan.github.io/selector-subscriber/index.mjs";
-
-            SelectorSubscriber.subscribe("form[target]", ( aForm ) => {
-                aForm.addEventListener('submit', async ( theEvent ) => {
-
-                    const formdata    = new FormData( theEvent.target );
-                    const destination = document.querySelector( theEvent.target.getAttribute('target') );
-                    const template    = ( theEvent.target.hasAttribute('template') ) ? document.querySelector( theEvent.target.getAttribute('template') ) 
-                                                                                     : destination.querySelector('template'); 
-
-                    const clone = template.content.cloneNode( true );
-                    Array.from( formdata.keys() ).forEach( (key) => {
-                        try {
-                            clone.querySelector(`slot[name=${key}]`).replaceWith( document.createTextNode( formdata.get( key ) ) );
-                        } catch(e) {
-                            console.warn(e);
-                        }
-                    });
-
-                    theEvent.preventDefault();
-                    destination[ theEvent.target.getAttribute('mutation') || "appendChild" ]( clone );
-                });
-            });
-        </script>
-
-        <script type="module">
             /* this just makes our code examples easier to inline */
             class ExampleCode extends HTMLElement {
                 connectedCallback() {
-                    const exampleCode = this.innerHTML;
-                    const shadowRoot = this.attachShadow( { mode: "open" } );
+                    const exampleCode = this.cloneNode( true ).innerHTML;
+                    const shadowRoot = this.attachShadow( { mode: "open" } );                    
                     const code = document.createElement('code');
+                    const pre  = document.createElement('pre');
+                    pre.appendChild( code );
                     code.innerText = exampleCode;
-                    shadowRoot.appendChild( code )
+                    shadowRoot.appendChild( pre );
+
+                    if ( this.hasAttribute('include'))
+                        this.after( ...this.children )
                 }
             }
-            customElements.define("example-code", ExampleCode);
-        </script> 
+            customElements.define("inline-example", ExampleCode);
+        </script>
+
+        <script type="module" src="index.mjs"></script>
     </head>
     <body>
         <h1>Form Template example</h1>
@@ -52,41 +33,60 @@
             Form templates link forms to templates in an HTML document. When the form is submitted,
             the template is cloned, filled out from the form inputs, and then inserted into the DOM.
         </p>
-        
-        <example-code>
-            <form id="template-form" target="table tbody" template="template#template-form-template" mutation="replaceWith"></form>
-        </example-code>
-        <table>
-            <thead>
-                <tr>
-                    <th type="col">Name</th>
-                    <th type="col">Email</th>
-                </tr>       
-            </thead>
-            <tbody>
-                <tr>
-                    <td>james@icloud.com</td>
-                    <td>james@icloud.com</td>                        
-                </tr>                
-            </tbody>
-            <tfoot>
-                <tr>
-                <td><input form="template-form" type="text" name="name" placeholder="Enter a name..."></td>
-                <td><input form="template-form" type="email" name="email" placeholder="Enter an email address..."></td>
-                <td><button form="template-form">Add</button></td>
-                </tr>
-            </tfoot>
-        </table>
 
-        <template id="template-form-template">
-            <tbody>
-                <tr>
-                    <td><slot name="name">A name goes here</slot></td>
-                    <td><slot name="email">An email address goes here</slot></td>                        
-                    <td><button>Delete</button></td>
-                </tr>
-            </tbody>
-        </template>
+        <inline-example>
+            <form id="template-form" action="table tbody" template="template#template-form-template"></form>
+        </inline-example>
+ 
+        <p>
+            The <code>template</code> attribute provides a selector that idenfies the template to be
+            filled in by the form.
+        </p>
+
+        <p>
+            The <code>mutation</code> attribute specifies how the filled out
+            template will be inserted into the document, and the <code>action</code> attribute specifies
+            where in the document the mutation will take place.
+        </p>
+        <p>
+            If the <code>mutation</code> attribute is omitted, then the appendChild mutation is used
+            by default.
+        </p>
+        <inline-example include>
+            <form id="template-form" action="table tbody" template="template#template-form-template" mutation="replaceWith"></form>
+        
+            <table>
+                <thead>
+                    <tr>
+                        <th type="col">Name</th>
+                        <th type="col">Email</th>
+                    </tr>       
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>john@example.com</td>                        
+                    </tr>                
+                </tbody>
+                <tfoot>
+                    <tr>
+                    <td><input form="template-form" type="text" name="name" placeholder="Enter a name..."></td>
+                    <td><input form="template-form" type="email" name="email" placeholder="Enter an email address..."></td>
+                    <td><button form="template-form">Update</button></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <template id="template-form-template">
+                <tbody>
+                    <tr>
+                        <td><slot name="name">A name goes here</slot></td>
+                        <td><slot name="email">An email address goes here</slot></td>                        
+                        <td><button>Delete</button></td>
+                    </tr>
+                </tbody>
+            </template>
+        </inline-example>
 
     </body>
 </html>
