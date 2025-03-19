@@ -2,11 +2,9 @@ import SelectorSubscriber from "https://jamesaduncan.github.io/selector-subscrib
 
 SelectorSubscriber.subscribe("form[template]", ( aForm ) => {
     aForm.addEventListener('submit', async ( theEvent ) => {
-
         const formdata    = new FormData( theEvent.target );
         const destination = document.querySelector( theEvent.target.getAttribute('action') );
-        const template    = ( theEvent.target.hasAttribute('template') ) ? document.querySelector( theEvent.target.getAttribute('template') ) 
-                                                                         : destination.querySelector('template'); 
+        const template    = document.querySelector( theEvent.target.getAttribute('template') );
 
         const clone = template.content.cloneNode( true );
         Array.from( formdata.keys() ).forEach( (key) => {

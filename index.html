@@ -6,25 +6,8 @@
 
         <title>Form Template</title>
 
-        <script type="module">
-            /* this just makes our code examples easier to inline */
-            class ExampleCode extends HTMLElement {
-                connectedCallback() {
-                    const exampleCode = this.cloneNode( true ).innerHTML;
-                    const shadowRoot = this.attachShadow( { mode: "open" } );                    
-                    const code = document.createElement('code');
-                    const pre  = document.createElement('pre');
-                    pre.appendChild( code );
-                    code.innerText = exampleCode;
-                    shadowRoot.appendChild( pre );
-
-                    if ( this.hasAttribute('include'))
-                        this.after( ...this.children )
-                }
-            }
-            customElements.define("inline-example", ExampleCode);
-        </script>
-
+        <script type="module" src="https://jamesaduncan.github.io/dom-inline-example/index.mjs"></script>
+        <script type="module" src="https://jamesaduncan.github.io/dom-template-literals/index.mjs"></script>
         <script type="module" src="index.mjs"></script>
     </head>
     <body>
@@ -53,7 +36,7 @@
             by default.
         </p>
         <inline-example include>
-            <form id="template-form" action="table tbody" template="template#template-form-template" mutation="replaceWith"></form>
+            <form id="template-form-mutation" action="table tbody" template="template#template-form-template" mutation="replaceWith"></form>
         
             <table>
                 <thead>
@@ -70,9 +53,10 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                    <td><input form="template-form" type="text" name="name" placeholder="Enter a name..."></td>
-                    <td><input form="template-form" type="email" name="email" placeholder="Enter an email address..."></td>
-                    <td><button form="template-form">Update</button></td>
+                        <!-- use dom-template-literals so that we can pull the value attrs in the input tags from elsewhere in the document -->
+                        <td><input form="template-form-mutation" type="text" name="name" value="${document.querySelector('tbody tr td:nth-child(1)').textContent}" placeholder="Enter a name..."></td>
+                        <td><input form="template-form-mutation" type="email" name="email" value="${document.querySelector('tbody tr td:nth-child(2)').textContent}" placeholder="Enter an email address..."></td>
+                        <td><button form="template-form-mutation">Update</button></td>
                     </tr>
                 </tfoot>
             </table>
