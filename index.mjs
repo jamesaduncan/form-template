@@ -17,5 +17,6 @@ SelectorSubscriber.subscribe("form[template]", ( aForm ) => {
 
         theEvent.preventDefault();
         destination[ theEvent.target.getAttribute('mutation') || "appendChild" ]( clone );
+        if ( theEvent.target.hasAttribute('reset') && theEvent.target.getAttribute('reset') ) theEvent.target.reset();
     });
 });
