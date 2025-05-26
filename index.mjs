@@ -32,7 +32,7 @@ SelectorSubscriber.subscribe("form[template]", ( aForm ) => {
             if ( clone.PUT ) clone.PUT();
         } else if ( method === 'post' ) {
             destination.appendChild( clone );
-            if ( clone.POST ) clone.POST( formdata )
+            if ( destination.POST ) destination.POST( formdata, clone )
         }
 
 //        destination[ theEvent.target.getAttribute('mutation') || "appendChild" ]( clone );
