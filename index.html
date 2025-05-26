@@ -27,16 +27,16 @@
         </p>
 
         <p>
-            The <code>mutation</code> attribute specifies how the filled out
-            template will be inserted into the document, and the <code>action</code> attribute specifies
-            where in the document the mutation will take place.
+            The <code>method</code> attribute specifies how the form will be submitted. with template forms,
+            the default is a POST request, which after performing the appropriate substitutions in the template,
+            will call appendChild on the target of the selector specified in the <code>action</code> attribute.
         </p>
         <p>
-            If the <code>mutation</code> attribute is omitted, then the appendChild mutation is used
-            by default.
+            If the <code>method</code> attribute is set to <code>PUT</code>, then the target of the selector specified
+            in the action attribute will be replaced by the completed template.
         </p>
         <inline-example include>
-            <form id="template-form-mutation" action="table tbody" template="template#template-form-template" mutation="replaceWith"></form>
+            <form id="template-form-mutation" action="table tbody" template="template#template-form-template" mutation="replaceWith" method="PUT"></form>
         
             <table>
                 <thead>

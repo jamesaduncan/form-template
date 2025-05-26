@@ -26,7 +26,19 @@ SelectorSubscriber.subscribe("form[template]", ( aForm ) => {
             }
         });
 
-        destination[ theEvent.target.getAttribute('mutation') || "appendChild" ]( clone );
+        const method = theEvent.target.getAttribute('method').toLowerCase() || 'post';
+        if ( method === 'put' ) {
+            destination.replaceWith( clone );
+            if ( clone.PUT ) clone.PUT();
+        } else if ( method === 'post' ) {
+            destination.appendChild( clone );
+            if ( clone.POST ) clone.POST( formdata )
+        }
+
+//        destination[ theEvent.target.getAttribute('mutation') || "appendChild" ]( clone );
+
         if ( theEvent.target.hasAttribute('reset') && theEvent.target.getAttribute('reset') ) theEvent.target.reset();
+
+
     });
 });
